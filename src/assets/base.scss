@@ -1,6 +1,12 @@
 /* 1rem = 16px
  * 기준 화면 1920 x 1080
  */
+html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 p {
     &.title {
         font-size: 6rem;    //  96px
@@ -8,8 +14,6 @@ p {
     }
 }
 
-div {
-    &.root {
-        padding: 3.125rem;  // 50px
-    }
+.p-button {
+    min-width: 28.25rem;    // 452px
 }

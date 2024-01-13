@@ -1,4 +1,5 @@
 import './assets/base.scss'
+import 'primevue/resources/themes/lara-light-indigo/theme.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
