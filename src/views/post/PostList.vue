@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="table-wrapper">
-                <DataTable :value="postStore.tableData" tableStyle="min-width: 50rem" paginator :rows="10" selectionMode="single" @rowSelect="onRowSelect">
+                <DataTable :value="postStore.tableData" tableStyle="min-width: 50rem" stripedRows paginator :rows="10" selectionMode="single" @rowSelect="onRowSelect">
                     <Column field="title" header="제목" style="min-width: 27.328125rem"></Column>
                     <Column field="content" header="내용" style="min-width: 81.984375rem"></Column>
                 </DataTable>
