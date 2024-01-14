@@ -1,8 +1,9 @@
 <template>
     <div class="textbox-component">
         <span class="p-float-label">
-            <InputText v-if="type !== 'password'" id="text" type="text" v-model="value" />
-            <Password v-else id="text" v-model="value" toggleMask :feedback="false" />
+            <Password v-if="props.type === 'password'" id="text" v-model="value" toggleMask :feedback="false" />
+            <Textarea v-else-if="props.type === 'textarea'" id="text" v-model="value" autoResize />
+            <InputText v-else id="text" type="text" v-model="value" />
             <label for="text">{{ props.placeholder }}</label>
         </span>
     </div>
@@ -12,6 +13,7 @@
 import { computed } from 'vue';
 
 import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
 import Password from 'primevue/password';
 
 interface Props {
