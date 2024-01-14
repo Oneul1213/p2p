@@ -10,7 +10,7 @@ const router = createRouter({
     },
     {
       path: '/auth/signup',
-      name: 'auth-singup',
+      name: 'auth-signup',
       component: () => import('@/views/auth/AuthSignup.vue'),
     },
     {
