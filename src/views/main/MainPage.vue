@@ -11,7 +11,7 @@
                 </div>
                 <div class="login" v-if="!isLogin">
                     <Button label="로그인" />
-                    <Button label="회원가입" />
+                    <Button label="회원가입" @click="movePage('auth-signup')" />
                 </div>
             </div>
         </div>
@@ -20,10 +20,19 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import Button from 'primevue/button';
+
+
+const router = useRouter();
 
 const isLogin = ref(false);
 const userName = ref("홍길동");
+
+function movePage(pageNm: string) {
+    router.push({ name: pageNm });
+}
 </script>
 
 <style scoped lang="scss">
@@ -38,7 +47,6 @@ const userName = ref("홍길동");
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 20.1875rem;
     }
 
     .button-wrapper {
