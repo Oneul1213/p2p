@@ -10,7 +10,7 @@
                     <Button label="게시글 목록" />
                 </div>
                 <div class="login" v-if="!isLogin">
-                    <Button label="로그인" />
+                    <Button label="로그인" @click="movePage('auth-login')" />
                     <Button label="회원가입" @click="movePage('auth-signup')" />
                 </div>
             </div>
