@@ -41,6 +41,7 @@ function movePage(pageNm: string) {
 
 function onRowSelect(selectEvent: DataTableRowSelectEvent) {
     console.log(selectEvent);
+    router.push({ name: 'post-detail', params: { index: selectEvent.index } });
 }
 </script>
 
