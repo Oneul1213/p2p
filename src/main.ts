@@ -9,6 +9,11 @@ import router from './router'
 
 import Primevue from 'primevue/config'
 
+import { worker } from './mocks/worker'
+if (import.meta.env.VITE_ENV_MODE === "local") {
+    worker.start();
+}
+
 const app = createApp(App)
 
 app.use(createPinia())
