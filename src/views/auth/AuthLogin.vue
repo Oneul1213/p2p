@@ -6,12 +6,12 @@
             </div>
             <div class="content-wrapper">
                 <div class="text-wrapper">
-                    <TextBox v-model="valueObject.id.value" placeholder="아이디를 입력하세요" />
+                    <TextBox v-model="valueObject.username.value" placeholder="아이디를 입력하세요" />
                     <TextBox v-model="valueObject.password.value" placeholder="비밀번호를 입력하세요" type="password" />
                 </div>
                 <div class="button-wrapper">
                     <Button label="뒤로가기" @click="movePage('back')" />
-                    <Button label="로그인" />
+                    <Button label="로그인" @click="onLoginButtonClick" />
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@ import TextBox from '@/components/TextBox.vue';
 const router = useRouter();
 
 const valueObject = {
-    id: ref(""),
+    username: ref(""),
     password: ref(""),
 }
 
@@ -38,6 +38,16 @@ function movePage(pageNm: string) {
         router.go(-1);
     }
     router.push({ name: pageNm });
+}
+
+function onLoginButtonClick() {
+    console.log("id: ", valueObject.username.value);
+    console.log("password: ", valueObject.password.value);
+
+    if (valueObject.username.value === "test2@naver.com"
+        && valueObject.password.value === "souf@2113") {
+        console.log("login success!!");
+    } else console.log("login fail!!")
 }
 </script>
 
