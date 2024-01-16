@@ -11,7 +11,16 @@ import Primevue from 'primevue/config'
 
 import { worker } from './mocks/worker'
 if (import.meta.env.VITE_ENV_MODE === "local") {
-    worker.start();
+    worker.start({
+        onUnhandledRequest(request, print) {
+            // /v1을 포함하지 않는 url은 경고를 표시하지 않음
+            if (!request.url.includes('/v1')) {
+                return;
+            }
+
+            print.warning();
+        }
+    });
 }
 
 const app = createApp(App)
