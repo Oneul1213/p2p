@@ -19,16 +19,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Button from 'primevue/button';
 
-
 const router = useRouter();
 
 const isLogin = ref(false);
-const userName = ref("홍길동");
+const userName = ref("");
+
+onMounted(() => {
+    const loginUserNickname = localStorage.getItem("login_user");
+    if (loginUserNickname) {
+        isLogin.value = true;
+        userName.value = loginUserNickname;
+    } else {
+        isLogin.value = false;
+        userName.value = "";
+    }
+})
 
 function movePage(pageNm: string) {
     router.push({ name: pageNm });

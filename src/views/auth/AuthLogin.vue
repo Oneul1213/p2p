@@ -19,12 +19,16 @@
 </template>
 
 <script setup lang="ts">
+import type { LoginRequestBody, LoginOkResponseResult } from '@/common/type';
+
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Button from 'primevue/button';
 
 import TextBox from '@/components/TextBox.vue';
+
+import ApiServcie from "@/common/ApiService";
 
 const router = useRouter();
 
@@ -41,13 +45,23 @@ function movePage(pageNm: string) {
 }
 
 function onLoginButtonClick() {
-    console.log("id: ", valueObject.username.value);
-    console.log("password: ", valueObject.password.value);
+    console.log("id: ", valueObject.username.value, ", password: ", valueObject.password.value);;
 
-    if (valueObject.username.value === "test2@naver.com"
-        && valueObject.password.value === "souf@2113") {
-        console.log("login success!!");
-    } else console.log("login fail!!")
+    requestLogin(valueObject.username.value, valueObject.password.value).then((data)=> {
+        console.log("로그인 정보: ", data);
+        const loginResult: LoginOkResponseResult = data.result;
+        localStorage.setItem("login_user", loginResult.nickname);
+        localStorage.setItem("access_token", loginResult.accessToken);
+        router.push({ name: "main" });
+    });
+}
+
+async function requestLogin(username: string, password: string) {
+    const loginParam: LoginRequestBody = {
+        username: username,
+        password: password,
+    }
+    return await ApiServcie.request("post", "/v1/auth/login", loginParam).then(({ data }) => data);
 }
 </script>
 
