@@ -45,7 +45,7 @@ function movePage(pageNm: string) {
 }
 
 function onLoginButtonClick() {
-    console.log("id: ", valueObject.username.value, ", password: ", valueObject.password.value);;
+    console.log("id: ", valueObject.username.value, ", password: ", valueObject.password.value);
 
     requestLogin(valueObject.username.value, valueObject.password.value).then((data)=> {
         console.log("로그인 정보: ", data);
