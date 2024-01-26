@@ -35,8 +35,7 @@ const postStore = usePostStore();
 function movePage(pageNm: string) {
     if (pageNm === "back") {
         router.go(-1);
-    }
-    router.push({ name: pageNm });
+    } else router.push({ name: pageNm });
 }
 
 function onRowSelect(selectEvent: DataTableRowSelectEvent) {
