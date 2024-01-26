@@ -7,7 +7,8 @@
             <div class="button-wrapper">
                 <div class="login" v-if="isLogin">
                     <p class="login-user">{{ `${userName}님, 안녕하세요` }}</p>
-                    <Button label="게시글 목록" />
+                    <Button label="로그아웃" @click="onLogoutButtonClick" />
+                    <Button label="게시글 목록" @click="movePage('post-list')" />
                 </div>
                 <div class="login" v-if="!isLogin">
                     <Button label="로그인" @click="movePage('auth-login')" />
@@ -42,6 +43,12 @@ onMounted(() => {
 
 function movePage(pageNm: string) {
     router.push({ name: pageNm });
+}
+
+function onLogoutButtonClick() {
+    localStorage.removeItem("login_user");
+    localStorage.removeItem("access_token");
+    router.go(0);
 }
 </script>
 
