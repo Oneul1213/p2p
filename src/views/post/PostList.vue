@@ -21,6 +21,8 @@
 <script setup lang="ts">
 import { type DataTableRowSelectEvent } from 'primevue/datatable';
 
+import { onMounted } from 'vue';
+
 import { useRouter } from 'vue-router';
 
 import Button from 'primevue/button';
@@ -31,6 +33,13 @@ import { usePostStore } from '@/stores/post';
 
 const router = useRouter();
 const postStore = usePostStore();
+
+onMounted(() => {
+    postStore.requestTableData().then((response) => {
+        postStore.tableData = response.result.posts;
+        console.log("tableData? ", postStore.tableData);
+    });
+})
 
 function movePage(pageNm: string) {
     if (pageNm === "back") {

@@ -5,7 +5,7 @@ export default class ApiService {
 
     static request(method: string, path: string, params?: object) {
         if (method === "get") {
-            return axios.get(`${this._baseUrl}/${path}`);
+            return axios.get(path);
         } else if (method === "post") {
             return axios.post(path, params);
         } else {
