@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export default class ApiService {
     static _baseUrl = import.meta.env.VITE_API_URL;
 
