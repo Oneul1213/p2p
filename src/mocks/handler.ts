@@ -25,7 +25,7 @@ export const handlers = [
                 }
             },
             { status: 200 });
-        } else if (requestBody.username === "test@naver.com"
+        } else if (requestBody.username === "test2@naver.com"
         && requestBody.password !== "souf@2113") {
             return HttpResponse.json({ "message": "비밀번호가 일치하지 않습니다." },{ status: 400, statusText: "NOT_MATCH_PASSWORD" });
         } else {
