@@ -11,6 +11,7 @@ export const handlers = [
     http.post<any, LoginRequestBody>(`${BASE_URL}/v1/auth/login`, async ({ request }) => {
         const requestBody = await request.json();
 
+        // TODO : 로그인 jwt 기반 구현으로 변경
         if (requestBody.username === "test2@naver.com"
         && requestBody.password === "souf@2113") {
             return HttpResponse.json({
@@ -24,8 +25,9 @@ export const handlers = [
                 }
             },
             { status: 200 });
-        } else if (requestBody.password !== "souf@2113") {
-            return HttpResponse.json({ "message": "비밀번호가 일치하지 않습니다." },{ status: 401, statusText: "NOT_MATCH_PASSWORD" });
+        } else if (requestBody.username === "test@naver.com"
+        && requestBody.password !== "souf@2113") {
+            return HttpResponse.json({ "message": "비밀번호가 일치하지 않습니다." },{ status: 400, statusText: "NOT_MATCH_PASSWORD" });
         } else {
             return HttpResponse.json({ "message": "로그인 오류" }, { status: 500, statusText: "LOGIN_ERROR" });
         }

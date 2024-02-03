@@ -19,23 +19,26 @@
 </template>
 
 <script setup lang="ts">
-import type { LoginRequestBody, LoginOkResponseResult } from '@/common/type';
+import type { LoginRequestBody, LoginOkResponseResult, ToastConfig } from '@/common/type';
 
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Button from 'primevue/button';
 
 import TextBox from '@/components/TextBox.vue';
-
 import ApiServcie from "@/common/ApiService";
+import { useToastStore } from '@/stores/toast';  
 
 const router = useRouter();
+const toastStore = useToastStore();
 
 const valueObject = {
     username: ref(""),
     password: ref(""),
 }
+
+const toastAdd = inject(toastStore.toastAddKey) as (toastConfig: ToastConfig) => void;
 
 function movePage(pageNm: string) {
     if (pageNm === "back") {
@@ -53,6 +56,21 @@ function onLoginButtonClick() {
         localStorage.setItem("login_user", loginResult.nickname);
         localStorage.setItem("access_token", loginResult.accessToken);
         router.push({ name: "main" });
+    }).catch(({ response }) => {
+        console.log("에러 정보: ", response);
+        let toastConfig: ToastConfig = {
+            severity: "error",
+            summary: "로그인 실패",
+            detail: "아이디 또는 비밀번호를 확인하세요.",
+            life: 3000,
+        };
+        if (response.statusText === "NOT_MATCH_PASSWORD") {
+            toastConfig = {
+                ... toastConfig,
+                detail: "비밀번호가 일치하지 않습니다.",
+            }
+        }
+        toastAdd(toastConfig);
     });
 }
 

@@ -8,6 +8,7 @@ import App from './App.vue'
 import router from './router'
 
 import Primevue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
 
 import { worker } from './mocks/worker'
 if (import.meta.env.VITE_ENV_MODE === "local") {
@@ -28,5 +29,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(Primevue)
+app.use(ToastService)
 
 app.mount('#app')
