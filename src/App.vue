@@ -14,10 +14,9 @@ import { RouterView } from 'vue-router';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 
-import { useToastStore } from '@/stores/toast';
+import { toastAddKey } from "@/constant/injectionKey";
 
 const toast = useToast();
-const toastStore = useToastStore();
 
 function toastAdd(toastConfig: ToastConfig) {
   toast.add({
@@ -28,7 +27,7 @@ function toastAdd(toastConfig: ToastConfig) {
   });
 }
 
-provide(toastStore.toastAddKey, toastAdd);
+provide(toastAddKey, toastAdd);
 </script>
 
 <style scoped>
