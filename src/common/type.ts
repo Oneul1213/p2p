@@ -1,3 +1,10 @@
+// signup
+interface SignupRequestBody {
+    username: string,
+    nickname: string,
+    password: string,
+}
+
 // Login
 interface LoginRequestBody {
     username: string,
@@ -22,6 +29,8 @@ interface ToastConfig {
 }
 
 export type {
+    SignupRequestBody,
+
     LoginRequestBody,
     LoginOkResponseResult,
 

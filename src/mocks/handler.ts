@@ -1,14 +1,34 @@
-import type { LoginRequestBody } from "@/common/type";
+import type { SignupRequestBody,  LoginRequestBody } from "@/common/type";
 import { http, HttpResponse } from "msw";
+import { usernames, nicknames } from "@/constant/sample";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+const url = (url: string) => `${BASE_URL}${url}`;
 
 export const handlers = [
     http.get(`${BASE_URL}/health`, () => {
         console.log("Captured a 'GET /health' request");
     }),
 
-    http.post<any, LoginRequestBody>(`${BASE_URL}/v1/auth/login`, async ({ request }) => {
+    /**
+     * ========== auth ==========
+     */
+    // signup
+    http.post<any, SignupRequestBody>(url("/v1/auth/signup"), async ({ request }) => {
+        const requestBody = await request.json();
+
+        if (usernames.includes(requestBody.username)) {
+            return HttpResponse.json({ "message": "중복된 아이디가 존재합니다." }, { status: 400, statusText: "DUPLICATE_USERNAME" });
+        }
+        if (nicknames.includes(requestBody.nickname)) {
+            return HttpResponse.json({ "message": "중복된 닉네임이 존재합니다." }, { status: 400, statusText: "DUPLICATE_NICKNAME" });
+        }
+
+        return HttpResponse.json({ "message": "회원가입에 성공하였습니다." }, { status: 201 });
+    }),
+
+    // login
+    http.post<any, LoginRequestBody>(url("/v1/auth/login"), async ({ request }) => {
         const requestBody = await request.json();
 
         // TODO : 로그인 jwt 기반 구현으로 변경
@@ -33,7 +53,10 @@ export const handlers = [
         }
     }),
 
-    http.get(`${BASE_URL}/v1/posts`, ({ params }) => {
+    /**
+     * ========== post ==========
+     */
+    http.get(url("/v1/posts"), ({ params }) => {
         const { page } = params; // eslint-disable-line
 
         return HttpResponse.json({
