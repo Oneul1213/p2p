@@ -11,7 +11,9 @@ import Primevue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 
 import { worker } from './mocks/worker'
+
 if (import.meta.env.VITE_ENV_MODE === "local") {
+    // ========== msw 관련 처리 ==========
     worker.start({
         onUnhandledRequest(request, print) {
             // /v1을 포함하지 않는 url은 경고를 표시하지 않음
