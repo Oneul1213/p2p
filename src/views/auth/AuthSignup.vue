@@ -6,9 +6,25 @@
             </div>
             <div class="content-wrapper">
                 <div class="text-wrapper">
-                    <TextBox v-model="valueObject.nickname.value" placeholder="닉네임을 입력하세요" />
-                    <TextBox v-model="valueObject.id.value" placeholder="아이디를 입력하세요" />
-                    <TextBox v-model="valueObject.password.value" placeholder="비밀번호를 입력하세요" type="password" />
+                    <TextBox
+                        v-model="valueObject.nickname.value"
+                        placeholder="닉네임을 입력하세요"
+                        :valid-regex-pattern="nicknameValidation.regex"
+                        :invalid-text="nicknameValidation.invalidText"
+                    />
+                    <TextBox
+                        v-model="valueObject.id.value"
+                        placeholder="아이디를 입력하세요"
+                        :valid-regex-pattern="idValidation.regex"
+                        :invalid-text="idValidation.invalidText"
+                    />
+                    <TextBox
+                        v-model="valueObject.password.value"
+                        placeholder="비밀번호를 입력하세요"
+                        type="password"
+                        :valid-regex-pattern="passwordValidation.regex"
+                        :invalid-text="passwordValidation.invalidText"
+                    />
                 </div>
                 <div class="button-wrapper">
                     <Button label="뒤로가기" @click="movePage('back')" />
@@ -29,12 +45,27 @@ import TextBox from '@/components/TextBox.vue';
 
 const router = useRouter();
 
+const nicknameValidation = {
+    regex: "^[a-zA-Z]{1}\\w{1,7}$",
+    invalidText: "닉네임은 영문자로 시작하는 2~8자이어야 합니다."
+}
+const idValidation = {
+    regex: "[\\w\\.]+@[\\w\\.]+\\.\\w+",
+    invalidText: "아이디는 이메일형식이어야 합니다."
+}
+const passwordValidation = {
+    regex: "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$",
+    invalidText: "비밀번호는 영문자, 숫자, 특수기호(@$!%*#?&)를 반드시 포함한 8~20자 형식이어야 합니다."
+}
+
+// ref
 const valueObject = {
     nickname: ref<string>(""),
     id: ref(""),
     password: ref(""),
 }
 
+// methods
 function movePage(pageNm: string) {
     if (pageNm === "back") {
         router.go(-1);
