@@ -28,17 +28,16 @@ import Button from 'primevue/button';
 
 import TextBox from '@/components/TextBox.vue';
 import ApiServcie from "@/common/ApiService";
-import { useToastStore } from '@/stores/toast';  
+import { toastAddKey } from '@/constant/injectionKey';
 
 const router = useRouter();
-const toastStore = useToastStore();
 
 const valueObject = {
     username: ref(""),
     password: ref(""),
 }
 
-const toastAdd = inject(toastStore.toastAddKey) as (toastConfig: ToastConfig) => void;
+const toastAdd = inject(toastAddKey) as (toastConfig: ToastConfig) => void;
 
 function movePage(pageNm: string) {
     if (pageNm === "back") {
