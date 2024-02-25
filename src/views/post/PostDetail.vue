@@ -10,15 +10,23 @@
             </div>
             <div class="content-wrapper">
                 <div class="data-wrapper">
-                    <p class="data-title">{{ data?.title }}</p>
+                    <p class="data-title">{{ post?.title }}</p>
                     <div class="inner-content-wrapper border">
-                        <p>{{ data?.content }}</p>
+                        <p>{{ post?.content }}</p>
                     </div>
                 </div>
                 <div class="comment-wrapper">
                     <p class="data-title">댓글</p>
                     <div class="inner-comment-wrapper border">
-
+                        <OrderList v-model="commentList" listStyle="height:auto" dataKey="id" :stripedRows="true">
+                            <template #item="slotProps">
+                                <div class="comment-item-wrapper">
+                                    <!-- TODO : 작성자 이름으로 수정 -->
+                                    <span class="commnet-author">{{ slotProps.item.authorId }}</span>
+                                    <span ckass="comment-content">{{ slotProps.item.content }}</span>
+                                </div>
+                            </template>
+                        </OrderList>
                     </div>
                 </div>
             </div>
@@ -27,14 +35,17 @@
 </template>
 
 <script setup lang="ts">
+import type { Comment, Post } from '@/common/type';
 import { useRouter, useRoute } from 'vue-router';
 
 import Button from 'primevue/button';
+import OrderList from 'primevue/orderlist';
 
 import { usePostStore } from '@/stores/post';
 import { onMounted, ref } from 'vue';
 
 interface Data {
+    id: Number,
     title: string,
     content: string,
 }
@@ -44,12 +55,25 @@ const route = useRoute();
 
 const postStore = usePostStore();
 
-const data = ref<Data>();
+const post = ref<Post>();
+const commentList = ref<Array<Comment>>();
 
 onMounted(() => {
-    const index: number = Number(route.params.index);
-    data.value = postStore.tableData[index];
-    console.log(data.value);
+    try {
+        const index: number = Number(route.params.index);
+        const data = postStore.tableData[index] as Data;
+        console.log("data? ", data);
+
+        // TODO : 가져온 data를 이용해서 게시글 정보 가져오기 후 댓글 설정
+        postStore.requestPostDetail({ postId: data.id }).then((response) => {
+            post.value = response.result;
+            console.log("post? ", post.value);
+            commentList.value = post.value?.comments;
+        });
+    } catch (e: any) {
+        console.log("호출 에러: ", e);
+        movePage("post-list")
+    }
 })
 
 function movePage(pageNm: string) {
@@ -116,6 +140,15 @@ function movePage(pageNm: string) {
             gap: 1rem;
             .inner-comment-wrapper {
                 min-height: 14rem;
+                max-height: 14rem;
+                overflow: scroll;
+                :deep(.p-orderlist-controls) {
+                    display: none;
+                }
+                .comment-item-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                }
             }
         }
     }

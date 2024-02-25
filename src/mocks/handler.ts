@@ -165,4 +165,52 @@ export const handlers = [
             }
         }, { status: 200 });
     }),
+    // get post
+    http.get(url("/v1/post"), ({ params }) => {
+        // TODO : params 체크
+        const pageId = params;  // eslint-disable-line
+        console.log("전송된  pageId: ", pageId);
+
+        // postId === 1일 경우
+        return HttpResponse.json({
+            "result": {
+                "id": 1,
+                "authorId": 1,
+                "title": "t22",
+                "content": "s22",
+                "createdAt": "2024-01-15T05:07:14.115Z",
+                "updatedAt": "2024-01-15T05:07:14.115Z",
+                "comments": [
+                    {
+                        "id": 6,
+                        "authorId": 1,
+                        "content": "hii",
+                        "createdAt": "2024-01-15T05:08:14.289Z",
+                        "updatedAt": "2024-01-15T05:08:14.289Z"
+                    },
+                    {
+                        "id": 5,
+                        "authorId": 1,
+                        "content": "hii",
+                        "createdAt": "2024-01-15T05:08:13.023Z",
+                        "updatedAt": "2024-01-15T05:08:13.023Z"
+                    },
+                    {
+                        "id": 4,
+                        "authorId": 1,
+                        "content": "hii",
+                        "createdAt": "2024-01-15T05:08:12.027Z",
+                        "updatedAt": "2024-01-15T05:08:12.027Z"
+                    },
+                    {
+                        "id": 3,
+                        "authorId": 1,
+                        "content": "hii",
+                        "createdAt": "2024-01-15T05:07:24.739Z",
+                        "updatedAt": "2024-01-15T05:07:24.739Z"
+                    }
+                ]
+            }
+        }, { status: 200 })
+    }),
 ]

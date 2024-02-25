@@ -28,6 +28,25 @@ interface ToastConfig {
     life: number,
 }
 
+// Post
+interface Comment {
+    id: Number,
+    authorId: Number,
+    content: String,
+    createdAt: String,
+    updatedAt: String,
+}
+
+interface Post {
+    id: Number,
+    authorId: Number,
+    title: String,
+    content: String,
+    createdAt: String,
+    updatedAt: String,
+    comments: Array<Comment>,
+}
+
 export type {
     SignupRequestBody,
 
@@ -35,4 +54,7 @@ export type {
     LoginOkResponseResult,
 
     ToastConfig,
+    
+    Comment,
+    Post,
 }

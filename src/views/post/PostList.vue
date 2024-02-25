@@ -35,7 +35,7 @@ const router = useRouter();
 const postStore = usePostStore();
 
 onMounted(() => {
-    postStore.requestTableData().then((response) => {
+    postStore.requestPostList().then((response) => {
         postStore.tableData = response.result.posts;
         console.log("tableData? ", postStore.tableData);
     });
