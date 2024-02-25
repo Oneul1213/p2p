@@ -34,7 +34,7 @@ const router = createRouter({
       component: () => import('@/views/post/PostEdit.vue'),
     },
     {
-      path: '/post/update',
+      path: '/post/update/:postId',
       name: 'post-update',
       component: () => import('@/views/post/PostEdit.vue'),
     },

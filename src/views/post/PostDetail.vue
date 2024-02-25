@@ -5,7 +5,7 @@
                 <p class="title">게시글 상세</p>
                 <div class="button-wrapper">
                     <Button label="뒤로가기" @click="movePage('back')" />
-                    <Button label="게시글 수정" @click="movePage('post-update')" />
+                    <Button label="게시글 수정" @click="movePage('post-update', post?.id)" />
                 </div>
             </div>
             <div class="content-wrapper">
@@ -44,12 +44,6 @@ import OrderList from 'primevue/orderlist';
 import { usePostStore } from '@/stores/post';
 import { onMounted, ref } from 'vue';
 
-interface Data {
-    id: Number,
-    title: string,
-    content: string,
-}
-
 const router = useRouter();
 const route = useRoute();
 
@@ -61,7 +55,7 @@ const commentList = ref<Array<Comment>>();
 onMounted(() => {
     try {
         const index: number = Number(route.params.index);
-        const data = postStore.tableData[index] as Data;
+        const data = postStore.tableData[index];
         console.log("data? ", data);
 
         // TODO : 가져온 data를 이용해서 게시글 정보 가져오기 후 댓글 설정
@@ -76,11 +70,15 @@ onMounted(() => {
     }
 })
 
-function movePage(pageNm: string) {
+function movePage(pageNm: string, params?: any) {
     if (pageNm === "back") {
         router.go(-1);
     }
-    router.push({ name: pageNm });
+    if (params !== undefined) {
+        router.push({ name: pageNm, params: { postId: params } });
+    } else {
+        router.push({ name: pageNm });
+    }
 }
 </script>
 

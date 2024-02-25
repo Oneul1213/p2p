@@ -19,24 +19,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import type { Post } from '@/common/type';
+
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import Button from 'primevue/button';
 
 import TextBox from '@/components/TextBox.vue';
-
-interface Data {
-    title: string,
-    content: string,
-}
+import { usePostStore } from '@/stores/post';
 
 const router = useRouter();
+const route = useRoute();
+const postStore  = usePostStore();
 
 const valueObject = {
     title: ref(""),
     content: ref(""),
 }
+
+onMounted(() => {
+    const postId = route.params.postId;
+    console.log("postId? ", postId);
+    if (postId !== null || postId !== undefined) {
+        const data = postStore.tableData.find((data: Post) => data.id === Number(postId));
+        console.log("data? ", data);
+        valueObject.title.value = data?.title as string;
+        valueObject.content.value = data?.content as string;
+    }
+})
 
 function movePage(pageNm: string) {
     if (pageNm === "back") {
@@ -66,6 +77,7 @@ function movePage(pageNm: string) {
             justify-content: center;
             align-items: center;
             gap: 1.045rem;
+            overflow: scroll;
             :deep(.p-button) {
                 min-width: 21.4776rem !important;
             }

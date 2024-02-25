@@ -174,12 +174,12 @@ export const handlers = [
         // postId === 1일 경우
         return HttpResponse.json({
             "result": {
-                "id": 1,
+                "id": 17,
                 "authorId": 1,
                 "title": "t22",
                 "content": "s22",
-                "createdAt": "2024-01-15T05:07:14.115Z",
-                "updatedAt": "2024-01-15T05:07:14.115Z",
+                "createdAt": "2024-01-14T05:25:47.481Z",
+                "updatedAt": "2024-01-14T05:25:47.481Z",
                 "comments": [
                     {
                         "id": 6,
