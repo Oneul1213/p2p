@@ -56,7 +56,9 @@ export const handlers = [
     /**
      * ========== post ==========
      */
+    // posts
     http.get(url("/v1/posts"), ({ params }) => {
+        // TODO : Pagenation이랑 연결해서 페이지 하나씩만 요청
         const { page } = params; // eslint-disable-line
 
         return HttpResponse.json({
