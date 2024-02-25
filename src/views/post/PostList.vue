@@ -4,7 +4,7 @@
             <div class="title-wrapper">
                 <p class="title">게시글 목록</p>
                 <div class="button-wrapper">
-                    <Button label="뒤로가기" @click="movePage('back')" />
+                    <Button label="뒤로가기" @click="movePage('main')" />
                     <Button label="게시글 작성" @click="movePage('post-write')" />
                 </div>
             </div>
