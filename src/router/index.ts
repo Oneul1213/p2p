@@ -24,7 +24,7 @@ const router = createRouter({
       component: () => import('@/views/post/PostList.vue'),
     },
     {
-      path: '/post/detail/:index',
+      path: '/post/detail/:postId',
       name: 'post-detail',
       component: () => import('@/views/post/PostDetail.vue'),
     },

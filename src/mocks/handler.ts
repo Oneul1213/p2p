@@ -57,9 +57,10 @@ export const handlers = [
      * ========== post ==========
      */
     // posts
-    http.get(url("/v1/posts"), ({ params }) => {
+    http.get(url("/v1/posts/:page"), ({ params }) => {
         // TODO : Pagenation이랑 연결해서 페이지 하나씩만 요청
-        const { page } = params; // eslint-disable-line
+        const { page } = params;
+        console.log("전송된 page? ", page);
 
         return HttpResponse.json({
             "result": {
@@ -166,15 +167,15 @@ export const handlers = [
         }, { status: 200 });
     }),
     // get post
-    http.get(url("/v1/post"), ({ params }) => {
+    http.get(url("/v1/post/:postId"), ({ params }) => {
         // TODO : params 체크
-        const pageId = params;  // eslint-disable-line
-        console.log("전송된  pageId: ", pageId);
+        const { postId } = params;
+        console.log("전송된 postId? ", postId);
 
         // postId === 1일 경우
         return HttpResponse.json({
             "result": {
-                "id": 17,
+                "id": postId !== undefined ? postId : 17,
                 "authorId": 1,
                 "title": "t22",
                 "content": "s22",
@@ -235,10 +236,10 @@ export const handlers = [
             return HttpResponse.json({
                 // 실제에선 수정/저장된 결과 값 반환
                 "result": {
-                    "id": 20,
-                    "authorId": 1,
-                    "title": "modified-title",
-                    "content": "modified-content",
+                    "id": requestBody.id ? requestBody.id : Math.random(),
+                    "authorId": requestBody.authorId,
+                    "title": requestBody.title,
+                    "content": requestBody.content,
                     "createdAt": "2024-01-14T08:39:53.582Z",
                     "updatedAt": "2024-01-14T08:43:54.032Z"
                 }

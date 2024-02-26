@@ -7,12 +7,13 @@ export const usePostStore = defineStore('post', () => {
     const tableData = ref<Array<Post>>([]);
 
     async function requestPostList() {
-        return await ApiService.request("get", "/v1/posts?page=1").then(({ data }) => data);
+        const page = 1;
+        return await ApiService.request("get", `/v1/posts/${page}`).then(({ data }) => data);
     }
 
     async function requestPostDetail(params: any) {
         const { postId } = params;
-        return await ApiService.request("get", `/v1/post?postId=${postId}`).then(({ data }) => data);
+        return await ApiService.request("get", `/v1/post/${postId}`).then(({ data }) => data);
     }
 
     async function requestSavePost(params: any) {
