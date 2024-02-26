@@ -58,13 +58,14 @@ const valueObject = {
     authorId: -1,
 }
 
+// TODO : 최대 글자수 제한 다시 확인
 const titleValidation = {
-    regex: "\\w{2,30}",
+    regex: "[\\w가-힣ㄱ-ㅣ]{2,30}",
     invalidText: "제목은 2~30자여야 합니다."
 }
 
 const contentValidation = {
-    regex: "\\w{2,2000}",
+    regex: "[\\w가-힣ㄱ-ㅣ]{2,2000}",
     invalidText: "내용은 2~2000자여야 합니다."
 }
 
@@ -72,7 +73,7 @@ onMounted(() => {
     const postId = route.params.postId;
     console.log("postId? ", postId);
     if (postId !== null || postId !== undefined) {
-        const data = postStore.tableData.find((data: Post) => data.id === Number(postId));
+        const data = tableDataRefs.value.find((data: Post) => data.id === Number(postId));
         console.log("data? ", data);
         valueObject.postId = data?.id as number;
         valueObject.authorId = data?.authorId as number;
@@ -105,8 +106,10 @@ function onPostSaveButtonClick() {
         };
         toastAdd(toastConfig);
         // id가 일치하는 것이 이미 있으면 해당 값 수정, 없으면 생성임
+        console.log("tableData? ", tableDataRefs.value, "parmas.id? ", params.id);
         const index = tableDataRefs.value.findIndex((data) => data.id === params.id);
-        if (index > 0) {
+        console.log("index? ", index);
+        if (index !== -1) {
             // 수정
             console.log("게시글 수정됨");
             const updatedPost = response.result;

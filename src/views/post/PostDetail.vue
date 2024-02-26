@@ -54,12 +54,12 @@ const commentList = ref<Array<Comment>>();
 
 onMounted(() => {
     try {
-        const index: number = Number(route.params.index);
-        const data = postStore.tableData[index];
+        const postId: number = Number(route.params.postId);
+        const data = postStore.tableData.find((data) => data.id === postId);
         console.log("data? ", data);
 
         // TODO : 가져온 data를 이용해서 게시글 정보 가져오기 후 댓글 설정
-        postStore.requestPostDetail({ postId: data.id }).then((response) => {
+        postStore.requestPostDetail({ postId: data?.id }).then((response) => {
             post.value = response.result;
             console.log("post? ", post.value);
             commentList.value = post.value?.comments;
