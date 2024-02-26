@@ -2,7 +2,7 @@
     <div class="root">
         <div class="container">
             <div class="title-wrapper">
-                <p class="title">게시글 작성</p>
+                <p class="title">{{ pageTitle }}</p>
                 <div class="button-wrapper">
                     <Button label="뒤로가기" @click="movePage('back')" />
                     <Button label="저장하기" @click="onPostSaveButtonClick" />
@@ -50,6 +50,8 @@ const { tableData: tableDataRefs } = storeToRefs(postStore);
 
 const toastAdd = inject(toastAddKey) as (toastConfig: ToastConfig) => void;
 
+const pageTitle = ref("게시글 작성");
+
 const valueObject = {
     title: ref(""),
     content: ref(""),
@@ -72,13 +74,17 @@ const contentValidation = {
 onMounted(() => {
     const postId = route.params.postId;
     console.log("postId? ", postId);
-    if (postId !== null || postId !== undefined) {
+    if (postId !== null && postId !== undefined) {
+        pageTitle.value = "게시글 수정";
+
         const data = tableDataRefs.value.find((data: Post) => data.id === Number(postId));
         console.log("data? ", data);
         valueObject.postId = data?.id as number;
         valueObject.authorId = data?.authorId as number;
         valueObject.title.value = data?.title as string;
         valueObject.content.value = data?.content as string;
+    } else  {
+        pageTitle.value = "게시글 작성";
     }
 })
 
