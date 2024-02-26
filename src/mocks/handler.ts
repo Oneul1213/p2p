@@ -1,4 +1,4 @@
-import type { SignupRequestBody,  LoginRequestBody } from "@/common/type";
+import type { SignupRequestBody,  LoginRequestBody, savePostRequestBody } from "@/common/type";
 import { http, HttpResponse } from "msw";
 import { usernames, nicknames } from "@/constant/sample";
 
@@ -212,5 +212,37 @@ export const handlers = [
                 ]
             }
         }, { status: 200 })
+    }),
+    // save post
+    http.post<any, savePostRequestBody>(url("/v1/post"), async ({ request }) => {
+        const requestBody = await request.json();
+
+        if (requestBody.title.length < 2 || 30 < requestBody.title.length) {
+            return HttpResponse.json({
+                "message": "입력 값이 유효하지 않습니다.",
+                "errors": [
+                    { "title": "제목은 2~30자여야 합니다." },
+                ],
+            }, { status: 400, statusText: "INVALID_PARAMETER" });
+        } else if (requestBody.content.length < 2 || 2000 < requestBody.content.length) {
+            return HttpResponse.json({
+                "message": "입력 값이 유효하지 않습니다.",
+                "errors": [
+                    { "content": "내용은 2~2000자여야 합니다." },
+                ],
+            }, { status: 400, statusText: "INVALID_PARAMETER" });
+        } else {
+            return HttpResponse.json({
+                // 실제에선 수정/저장된 결과 값 반환
+                "result": {
+                    "id": 20,
+                    "authorId": 1,
+                    "title": "modified-title",
+                    "content": "modified-content",
+                    "createdAt": "2024-01-14T08:39:53.582Z",
+                    "updatedAt": "2024-01-14T08:43:54.032Z"
+                }
+            }, { status: 200 });
+        }
     }),
 ]

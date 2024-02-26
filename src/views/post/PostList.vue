@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="table-wrapper">
-                <DataTable :value="postStore.tableData" tableStyle="min-width: 50rem" stripedRows paginator :rows="10" selectionMode="single" @rowSelect="onRowSelect">
+                <DataTable :value="tableDataRefs" tableStyle="min-width: 50rem" stripedRows paginator :rows="10" selectionMode="single" @rowSelect="onRowSelect">
                     <Column field="title" header="제목" style="min-width: 27.328125rem"></Column>
                     <Column field="content" header="내용" style="min-width: 81.984375rem"></Column>
                 </DataTable>
@@ -30,14 +30,18 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
 import { usePostStore } from '@/stores/post';
+import { storeToRefs } from 'pinia';
 
 const router = useRouter();
 const postStore = usePostStore();
 
+const { tableData: tableDataRefs } = storeToRefs(postStore);
+
 onMounted(() => {
     postStore.requestPostList().then((response) => {
-        postStore.tableData = response.result.posts;
-        console.log("tableData? ", postStore.tableData);
+        // TODO : API 연결 후 조건문 삭제?
+        if (tableDataRefs.value.length === 0) tableDataRefs.value = response.result.posts;
+        console.log("tableData? ", tableDataRefs.value);
     });
 })
 

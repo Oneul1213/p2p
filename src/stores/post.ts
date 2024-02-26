@@ -15,10 +15,15 @@ export const usePostStore = defineStore('post', () => {
         return await ApiService.request("get", `/v1/post?postId=${postId}`).then(({ data }) => data);
     }
 
+    async function requestSavePost(params: any) {
+        return await ApiService.request("post", "/v1/post", params).then(({ data }) => data);
+    }
+
     return {
         tableData,
 
         requestPostList,
         requestPostDetail,
+        requestSavePost,
     }
 })

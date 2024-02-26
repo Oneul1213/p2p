@@ -47,6 +47,13 @@ interface Post {
     comments: Array<Comment>,
 }
 
+interface savePostRequestBody {
+    id: Number,
+    authorId: Number,
+    title: String,
+    content: String,
+}
+
 export type {
     SignupRequestBody,
 
@@ -57,4 +64,5 @@ export type {
     
     Comment,
     Post,
+    savePostRequestBody,
 }

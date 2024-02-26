@@ -3,7 +3,7 @@
         <div class="flex felx-column gap-2">
             <FloatLabel>
                 <Password v-if="props.type === 'password'" :id="keyId" v-model="value" toggleMask :feedback="false" :invalid="isInvalid" />
-                <Textarea v-else-if="props.type === 'textarea'" :id="keyId" v-model="value" autoResize />
+                <Textarea v-else-if="props.type === 'textarea'" :id="keyId" v-model="value" autoResize :invalid="isInvalid" />
                 <InputText v-else :id="keyId" type="text" v-model="value" :aria-describedby="`${keyId}-help`" :invalid="isInvalid" />
                 <label for="text" class="float-label-text">{{ props.placeholder }}</label>
             </FloatLabel>
