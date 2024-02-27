@@ -1,3 +1,9 @@
+// user
+interface User {
+    id: number,
+    nickname: string,
+}
+
 // signup
 interface SignupRequestBody {
     username: string,
@@ -29,14 +35,6 @@ interface ToastConfig {
 }
 
 // Post
-interface Comment {
-    id: Number,
-    authorId: Number,
-    content: String,
-    createdAt: String,
-    updatedAt: String,
-}
-
 interface Post {
     id: Number,
     authorId: Number,
@@ -47,22 +45,41 @@ interface Post {
     comments: Array<Comment>,
 }
 
-interface savePostRequestBody {
+interface SavePostRequestBody {
     id: Number,
     authorId: Number,
     title: String,
     content: String,
 }
 
+// Comment
+interface Comment {
+    id: Number,
+    authorId: Number,
+    content: String,
+    createdAt: String,
+    updatedAt: String,
+}
+
+interface CommentRequestBody {
+    authorId: Number,
+    postId: Number,
+    content: String,
+}
+
 export type {
+    User,
+
     SignupRequestBody,
 
     LoginRequestBody,
     LoginOkResponseResult,
 
     ToastConfig,
-    
-    Comment,
+
     Post,
-    savePostRequestBody,
+    SavePostRequestBody,
+
+    Comment,
+    CommentRequestBody,
 }

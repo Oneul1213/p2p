@@ -29,8 +29,13 @@ import Button from 'primevue/button';
 import TextBox from '@/components/TextBox.vue';
 import ApiServcie from "@/common/ApiService";
 import { toastAddKey } from '@/constant/injectionKey';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
 const router = useRouter();
+
+const userStore = useUserStore();
+const { userInfo } = storeToRefs(userStore);
 
 const valueObject = {
     username: ref(""),
@@ -52,8 +57,16 @@ function onLoginButtonClick() {
     requestLogin(valueObject.username.value, valueObject.password.value).then((data)=> {
         console.log("로그인 정보: ", data);
         const loginResult: LoginOkResponseResult = data.result;
-        localStorage.setItem("login_user", loginResult.nickname);
+        localStorage.setItem("login_user_id", loginResult.id);
+        localStorage.setItem("login_user_nickname", loginResult.nickname);
         localStorage.setItem("access_token", loginResult.accessToken);
+
+        // userStore 설정
+        userInfo.value = {
+            id: Number(loginResult.id),
+            nickname: loginResult.nickname,
+        };
+
         router.push({ name: "main" });
     }).catch(({ response }) => {
         console.log("에러 정보: ", response);

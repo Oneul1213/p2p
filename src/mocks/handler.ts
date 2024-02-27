@@ -1,4 +1,4 @@
-import type { SignupRequestBody,  LoginRequestBody, savePostRequestBody } from "@/common/type";
+import type { SignupRequestBody,  LoginRequestBody, SavePostRequestBody, CommentRequestBody } from "@/common/type";
 import { http, HttpResponse } from "msw";
 import { usernames, nicknames } from "@/constant/sample";
 
@@ -36,7 +36,7 @@ export const handlers = [
         && requestBody.password === "souf@2113") {
             return HttpResponse.json({
                 "result": {
-                    "id": 1,
+                    "id": 99,
                     "username": "test2@naver.com",
                     "nickname": "soo22",
                     "createdAt": "2024-01-14T04:37:37.672Z",
@@ -215,7 +215,7 @@ export const handlers = [
         }, { status: 200 })
     }),
     // save post
-    http.post<any, savePostRequestBody>(url("/v1/post"), async ({ request }) => {
+    http.post<any, SavePostRequestBody>(url("/v1/post"), async ({ request }) => {
         const requestBody = await request.json();
 
         if (requestBody.title.length < 2 || 30 < requestBody.title.length) {
@@ -245,5 +245,42 @@ export const handlers = [
                 }
             }, { status: 200 });
         }
+    }),
+    /**
+     * ========== comment ==========
+     */
+    // create comment
+    http.post<any, CommentRequestBody>(url("/v1/comment"), async ({ request }) => {
+        const { authorId, postId, content } = await request.json();
+
+        if (2 <= content.length && content.length <= 200) {
+            return HttpResponse.json({
+                "result": {
+                    "id": 14,
+                    "authorId": authorId,
+                    "postId": postId,
+                    "content": content,
+                    "createdAt": "2024-01-14T11:41:13.173Z",
+                    "updatedAt": "2024-01-14T11:41:13.173Z"
+                }
+            }, { status: 200 });
+        } else {
+            return HttpResponse.json({
+                "message": "입력 값이 유효하지 않습니다.",
+                "errors": [
+                    {
+                        "content": "내용은 2~200자여야 합니다."
+                    }
+                ]
+            }, { status: 400, statusText: "INVALID_PARAMETER" });
+        }
+    }),
+    // delete comment
+    http.delete(url("/v1/comment/:commentId"), ({ params }) => {
+        const { commentId } = params;   // eslint-disable-line
+
+        return HttpResponse.json({
+            "message": "댓글이 정상적으로 삭제되었습니다."
+        }, { status: 200 })
     }),
 ]

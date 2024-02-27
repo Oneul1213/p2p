@@ -18,7 +18,14 @@
                 <div class="comment-wrapper">
                     <p class="data-title">댓글</p>
                     <div class="inner-comment-wrapper border">
-                        <OrderList v-model="commentList" listStyle="height:auto" dataKey="id" :stripedRows="true">
+                        <OrderList
+                            v-model="commentList"
+                            listStyle="height:auto"
+                            dataKey="id"
+                            :stripedRows="true"
+                            :selection="selectedCommentList"
+                            @selection-change="onCommentSeletionChange"
+                        >
                             <template #item="slotProps">
                                 <div class="comment-item-wrapper">
                                     <!-- TODO : 작성자 이름으로 수정 -->
@@ -28,6 +35,17 @@
                             </template>
                         </OrderList>
                     </div>
+                    <TextBox
+                        v-model="commentValue"
+                        placeholder="댓글을 입력해주세요"
+                        type="textarea"
+                        :validRegexPattern="commentValidation.regex"
+                        :invalidText="commentValidation.invalidText"
+                    />
+                    <div class="comment-button-wrapper">
+                        <Button label="댓글 삭제" @click="onCommentDeleteButtonClick" />
+                        <Button label="댓글 입력" @click="onCommentInputButtonClick" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -35,27 +53,45 @@
 </template>
 
 <script setup lang="ts">
-import type { Comment, Post } from '@/common/type';
+import type { OrderListSelectionChangeEvent } from 'primevue/orderlist'
+import type { Comment, Post, CommentRequestBody, ToastConfig } from '@/common/type';
+
 import { useRouter, useRoute } from 'vue-router';
+import { inject, onMounted, ref } from 'vue';
 
 import Button from 'primevue/button';
 import OrderList from 'primevue/orderlist';
 
+import TextBox from '@/components/TextBox.vue';
 import { usePostStore } from '@/stores/post';
-import { onMounted, ref } from 'vue';
+import { useUserStore } from '@/stores/user';
+import { useCommentStore } from '@/stores/comment';
+import { toastAddKey } from '@/constant/injectionKey';
 
 const router = useRouter();
 const route = useRoute();
 
 const postStore = usePostStore();
+const userStore = useUserStore();
+const commentStore = useCommentStore();
+
+const toastAdd = inject(toastAddKey) as (toastConfig: ToastConfig) => void;
 
 const post = ref<Post>();
 const commentList = ref<Array<Comment>>();
+const commentValue = ref<string>("");
+const postId = ref<number>(-1);
+const selectedCommentList = ref<Array<Comment>>([]);
+
+const commentValidation = {
+    regex: "[\\wㄱ-ㅣ가-힣]{2,200}",
+    invalidText: "내용은 2~20자여야 합니다."
+}
 
 onMounted(() => {
     try {
-        const postId: number = Number(route.params.postId);
-        const data = postStore.tableData.find((data) => data.id === postId);
+        postId.value = Number(route.params.postId);
+        const data = postStore.tableData.find((data) => data.id === postId.value);
         console.log("data? ", data);
 
         // TODO : 가져온 data를 이용해서 게시글 정보 가져오기 후 댓글 설정
@@ -66,7 +102,7 @@ onMounted(() => {
         });
     } catch (e: any) {
         console.log("호출 에러: ", e);
-        movePage("post-list")
+        movePage("post-list");
     }
 })
 
@@ -80,9 +116,60 @@ function movePage(pageNm: string, params?: any) {
         router.push({ name: pageNm });
     }
 }
+
+function onCommentSeletionChange(e: OrderListSelectionChangeEvent) {
+    console.log("selection change? ", e);
+    selectedCommentList.value = e.value;
+}
+
+function onCommentDeleteButtonClick() {
+    console.log("선택? ", selectedCommentList.value);
+    if (selectedCommentList.value.some((comment) => comment.authorId !== userStore.userInfo?.id)) {
+        let toastConfig: ToastConfig = {
+            severity: "error",
+            summary: "삭제 실패",
+            detail: "삭제할 권한이 없는 댓글이 있습니다.",
+            life: 3000,
+        };
+        toastAdd(toastConfig);
+    } else {
+        for (let selectedComment of selectedCommentList.value) {
+            const index = commentList.value?.findIndex((comment) =>  comment.id === selectedComment.id) as number;
+            if (index != -1) {
+                commentList.value?.splice(index, 1);
+                // Api 호출
+                let params = { commentId: selectedComment.id }
+                commentStore.requestDeleteComment(params);
+            }
+        }
+    }
+    // 선택 초기화
+    selectedCommentList.value.splice(0, selectedCommentList.value.length);
+    console.log("비움? ", selectedCommentList.value);
+}
+
+function onCommentInputButtonClick() {
+    if (commentValue.value !== "") {
+        console.log("loginUserNickname? ", userStore.userInfo?.nickname);
+        let params: CommentRequestBody = {
+            authorId: userStore.userInfo?.id as Number,
+            postId: postId.value,
+            content: commentValue.value,
+        }
+        // comment 생성 api 호출 후 반환 값 commentList에 추가
+        commentStore.requestCreateComment(params).then((response) => {
+            console.log("data? ", response);
+            commentList.value?.push(response.result);
+            commentValue.value = "";
+        })
+    }
+}
 </script>
 
 <style scoped lang="scss">
+:deep(.p-button) {
+    min-width: 21.4776rem !important;
+}
 .container {
     display: flex;
     flex-direction: column;
@@ -102,15 +189,12 @@ function movePage(pageNm: string, params?: any) {
             justify-content: center;
             align-items: center;
             gap: 1.045rem;
-            :deep(.p-button) {
-                min-width: 21.4776rem !important;
-            }
         }
     }
     .content-wrapper {
         width: 100%;
         padding: 1rem;
-        height: 46rem;
+        height: 53rem;
         border: 1px solid #D9D9D9;
         p.data-title {
             margin: 0;
@@ -125,7 +209,7 @@ function movePage(pageNm: string, params?: any) {
             gap: 1rem;
             .inner-content-wrapper {
                 padding: 1rem;
-                min-height: 20.4375rem;
+                min-height: 17.4375rem;
                 p {
                     margin: 0;
                 }
@@ -147,6 +231,17 @@ function movePage(pageNm: string, params?: any) {
                     display: flex;
                     flex-direction: column;
                 }
+            }
+            :deep(.textbox-component) {
+                margin-top: 1rem;
+            }
+            :deep(.p-inputtextarea) {
+                width: 100%;
+            }
+            .comment-button-wrapper {
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
             }
         }
     }

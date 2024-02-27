@@ -31,7 +31,7 @@ const isLogin = ref(false);
 const userName = ref("");
 
 onMounted(() => {
-    const loginUserNickname = localStorage.getItem("login_user");
+    const loginUserNickname = localStorage.getItem("login_user_nickname");
     if (loginUserNickname) {
         isLogin.value = true;
         userName.value = loginUserNickname;
