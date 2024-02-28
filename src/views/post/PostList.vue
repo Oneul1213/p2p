@@ -87,6 +87,10 @@ function onRemoveButtonClick() {
         life: 3000,
     };
     toastAdd(toastConfig);
+
+    // 초기화
+    selectedRows.value.splice(0, selectedRows.value.length);
+    selectedRowIndices.value.splice(0, selectedRowIndices.value.length);
 }
 
 function onRowSelect(selectEvent: DataTableRowSelectEvent) {
