@@ -250,8 +250,9 @@ export const handlers = [
      * ========== comment ==========
      */
     // create comment
-    http.post<any, CommentRequestBody>(url("/v1/comment"), async ({ request }) => {
-        const { authorId, postId, content } = await request.json();
+    http.post<any, CommentRequestBody>(url("/v1/posts/:postId/comment"), async ({ params, request }) => {
+        const { postId } = params;
+        const { authorId, content } = await request.json();
 
         if (2 <= content.length && content.length <= 200) {
             return HttpResponse.json({
@@ -276,11 +277,26 @@ export const handlers = [
         }
     }),
     // delete comment
-    http.delete(url("/v1/comment/:commentId"), ({ params }) => {
+    http.delete(url("/v1/comments/:commentId"), ({ params }) => {
         const { commentId } = params;   // eslint-disable-line
 
         return HttpResponse.json({
             "message": "댓글이 정상적으로 삭제되었습니다."
         }, { status: 200 })
+    }),
+    // update comment
+    http.put<any, CommentRequestBody>(url("/v1/comments/:commentId"), async ({ params: { commnetId }, request }) => {
+        const { authorId, postId, content } = await request.json();
+
+        return HttpResponse.json({
+            "result": {
+                "id": commnetId,
+                "authorId": authorId,
+                "postId": postId,
+                "content": content,
+                "createdAt": "2024-01-15T05:47:18.694Z",
+                "updatedAt": "2024-01-15T05:47:24.768Z"
+            }
+        }, { status: 200 });
     }),
 ]

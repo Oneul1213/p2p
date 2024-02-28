@@ -36,8 +36,10 @@ export default class ApiService {
             return this.instance.post(path, params);
         } else if (method === "delete") {
             return this.instance.delete(path);
+        } else if (method === "put") {
+            return this.instance.put(path, params);
         } else {
-            throw new Error("존재하지 않는 HTTP Method");
+            throw new Error("지원하지 않는 HTTP Method");
         }
     }
 }

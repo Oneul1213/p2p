@@ -23,8 +23,7 @@
                             listStyle="height:auto"
                             dataKey="id"
                             :stripedRows="true"
-                            :selection="selectedCommentList"
-                            @selection-change="onCommentSeletionChange"
+                            v-model:selection="selectedCommentList"
                         >
                             <template #item="slotProps">
                                 <div class="comment-item-wrapper">
@@ -44,6 +43,7 @@
                     />
                     <div class="comment-button-wrapper">
                         <Button label="댓글 삭제" @click="onCommentDeleteButtonClick" />
+                        <Button label="댓글 수정" :disabled="isUpdateButtonDisabled" @click="onCommentUpdateButtonClick" />
                         <Button label="댓글 입력" @click="onCommentInputButtonClick" />
                     </div>
                 </div>
@@ -53,7 +53,6 @@
 </template>
 
 <script setup lang="ts">
-import type { OrderListSelectionChangeEvent } from 'primevue/orderlist'
 import type { Comment, Post, CommentRequestBody, ToastConfig } from '@/common/type';
 
 import { useRouter, useRoute } from 'vue-router';
@@ -87,6 +86,8 @@ const commentValidation = {
     regex: "[\\wㄱ-ㅣ가-힣]{2,200}",
     invalidText: "내용은 2~20자여야 합니다."
 }
+const isUpdateButtonDisabled = ref(false);
+const updatingComment = ref<Comment | null>(null);
 
 onMounted(() => {
     try {
@@ -117,11 +118,6 @@ function movePage(pageNm: string, params?: any) {
     }
 }
 
-function onCommentSeletionChange(e: OrderListSelectionChangeEvent) {
-    console.log("selection change? ", e);
-    selectedCommentList.value = e.value;
-}
-
 function onCommentDeleteButtonClick() {
     console.log("선택? ", selectedCommentList.value);
     if (selectedCommentList.value.some((comment) => comment.authorId !== userStore.userInfo?.id)) {
@@ -133,6 +129,8 @@ function onCommentDeleteButtonClick() {
         };
         toastAdd(toastConfig);
     } else {
+        let removeCount = selectedCommentList.value.length;
+
         for (let selectedComment of selectedCommentList.value) {
             const index = commentList.value?.findIndex((comment) =>  comment.id === selectedComment.id) as number;
             if (index != -1) {
@@ -142,26 +140,106 @@ function onCommentDeleteButtonClick() {
                 commentStore.requestDeleteComment(params);
             }
         }
+
+        let toastConfig: ToastConfig = {
+            severity: "success",
+            summary: "삭제 성공",
+            detail: `${removeCount}개의 댓글이 삭제되었습니다.`,
+            life: 3000,
+        };
+        toastAdd(toastConfig);
     }
     // 선택 초기화
     selectedCommentList.value.splice(0, selectedCommentList.value.length);
     console.log("비움? ", selectedCommentList.value);
 }
 
+function onCommentUpdateButtonClick() {
+    if (selectedCommentList.value.length === 0) {
+        let toastConfig: ToastConfig = {
+            severity: "error",
+            summary: "수정 실패",
+            detail: "수정할 댓글을 선택해주세요.",
+            life: 3000,
+        };
+        toastAdd(toastConfig);
+    } else if (selectedCommentList.value.length > 1) {
+        let toastConfig: ToastConfig = {
+            severity: "error",
+            summary: "수정 실패",
+            detail: "1개의 댓글만 선택해주세요.",
+            life: 3000,
+        };
+        toastAdd(toastConfig);
+    } else {
+        const comment = selectedCommentList.value.pop();
+        console.log("comment? ", comment);
+        if (comment?.authorId !== userStore.userInfo?.id) {
+            let toastConfig: ToastConfig = {
+                severity: "error",
+                summary: "수정 실패",
+                detail: "수정할 권한이 없습니다.",
+                life: 3000,
+            };
+            toastAdd(toastConfig);
+            return;
+        }
+
+        // 댓글 입력창에 복사
+        commentValue.value = comment?.content as string;
+        updatingComment.value = comment as Comment;
+        isUpdateButtonDisabled.value = true;
+    }
+}
+
 function onCommentInputButtonClick() {
     if (commentValue.value !== "") {
         console.log("loginUserNickname? ", userStore.userInfo?.nickname);
-        let params: CommentRequestBody = {
-            authorId: userStore.userInfo?.id as Number,
-            postId: postId.value,
-            content: commentValue.value,
+
+        // 댓글 생성인 경우
+        if (updatingComment.value === null) {
+            let params: CommentRequestBody = {
+                authorId: userStore.userInfo?.id as Number,
+                postId: postId.value,
+                content: commentValue.value,
+            };
+            // comment 생성 api 호출 후 반환 값 commentList에 추가
+            commentStore.requestCreateComment(params).then((response) => {
+                console.log("response? ", response);
+                commentList.value?.push(response.result);
+                commentValue.value = "";
+            });
+            // 댓글 수정인 경우
+        } else {
+            let params = {
+                commentId: updatingComment.value.id,
+                comment: {
+                    authorId: updatingComment.value.authorId,
+                    postId: postId.value,
+                    content: commentValue.value,
+                }
+            };
+            // comment 수정 api 호출 후 반환 값 적용
+            commentStore.requestUpdateComment(params).then((response) => {
+                console.log("response? ", response);
+                const index = commentList.value?.findIndex((comment) => comment.id === updatingComment.value?.id);
+                console.log("index? ", index);
+                
+                if (index !== -1 && commentList.value !== undefined) {
+                    const updatedComment = {
+                        ...commentList.value[index as number],
+                        ...response.result
+                    }
+                    commentList.value.splice(index as number, 1, updatedComment);
+                } 
+                // 초기화
+                commentValue.value = "";
+                updatingComment.value = null;
+                isUpdateButtonDisabled.value = false;
+            });
+
+            console.log("commentList? ", commentList.value);
         }
-        // comment 생성 api 호출 후 반환 값 commentList에 추가
-        commentStore.requestCreateComment(params).then((response) => {
-            console.log("data? ", response);
-            commentList.value?.push(response.result);
-            commentValue.value = "";
-        })
     }
 }
 </script>
