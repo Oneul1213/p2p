@@ -29,15 +29,15 @@ export default class ApiService {
         }
     }
 
-    static request(method: string, path: string, params?: object) {
+    static request(method: string, path: string, params?: object, allowCORS: boolean = false) {
         if (method === "get") {
-            return this.instance.get(path);
+            return this.instance.get(path, { withCredentials: allowCORS });
         } else if (method === "post") {
-            return this.instance.post(path, params);
+            return this.instance.post(path, params, { withCredentials: allowCORS });
         } else if (method === "delete") {
-            return this.instance.delete(path);
+            return this.instance.delete(path, { withCredentials: allowCORS });
         } else if (method === "put") {
-            return this.instance.put(path, params);
+            return this.instance.put(path, params, { withCredentials: allowCORS });
         } else {
             throw new Error("지원하지 않는 HTTP Method");
         }
