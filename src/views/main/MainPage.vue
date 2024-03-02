@@ -46,7 +46,8 @@ function movePage(pageNm: string) {
 }
 
 function onLogoutButtonClick() {
-    localStorage.removeItem("login_user");
+    localStorage.removeItem("login_user_nickname");
+    localStorage.removeItem("login_user_id");
     localStorage.removeItem("access_token");
     router.go(0);
 }
