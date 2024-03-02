@@ -28,7 +28,7 @@
                 </div>
                 <div class="button-wrapper">
                     <Button label="뒤로가기" @click="movePage('back')" />
-                    <Button label="회원가입" />
+                    <Button label="회원가입" @click="onSignupButtonClick" />
                 </div>
             </div>
         </div>
@@ -42,8 +42,10 @@ import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 
 import TextBox from '@/components/TextBox.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const nicknameValidation = {
     regex: "^[a-zA-Z]{1}\\w{1,7}$",
@@ -71,6 +73,18 @@ function movePage(pageNm: string) {
         router.go(-1);
     }
     router.push({ name: pageNm });
+}
+
+function onSignupButtonClick() {
+    console.log("회원가입 클릭");
+    let params = {
+        username: valueObject.id.value,
+        nickname: valueObject.nickname.value,
+        password: valueObject.password.value,
+    }
+    authStore.requestSignup(params).then((res) => {
+        console.log("res? ", res);
+    })
 }
 </script>
 
